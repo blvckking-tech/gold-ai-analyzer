@@ -1,0 +1,63 @@
+Metadata-Version: 2.5
+Name: biquote
+Version: 0.3.0
+Summary: Free real-time market data client - forex, crypto, gold, index CFDs and an economic calendar from a MetaTrader 5 feed. No API key required.
+Project-URL: Homepage, https://biquote.io
+Project-URL: Documentation, https://biquote.io/docs/
+Project-URL: Repository, https://github.com/halitcanbaba/biquote-sdk
+Project-URL: Issues, https://github.com/halitcanbaba/biquote-sdk/issues
+Project-URL: Changelog, https://github.com/halitcanbaba/biquote-sdk/blob/main/CHANGELOG.md
+License: MIT
+License-File: LICENSE
+Keywords: crypto,economic-calendar,forex,forex-api,gold,market-data,metatrader,mt5,ohlc,real-time
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: Financial and Insurance Industry
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Topic :: Office/Business :: Financial :: Investment
+Requires-Python: >=3.9
+Requires-Dist: requests>=2.25
+Description-Content-Type: text/markdown
+
+# biquote
+
+Free real-time market data for Python - forex, crypto, gold, index CFDs and a 54-country economic calendar, streamed from a MetaTrader 5 feed.
+
+**No API key. No signup. 15,000 requests/min.**
+
+```bash
+pip install biquote
+```
+
+```python
+from biquote import Biquote
+
+bq = Biquote()
+
+# One quote - use "mid" as the price
+tick = bq.tick("EURUSD")
+print(tick["mid"], tick["dayDiffPercent"])
+
+# Up to 100 symbols in one request
+ticks = bq.latest(["EURUSD", "XAUUSD", "BTCUSD", "USDTRY"])
+
+# OHLC candles into pandas (oldest first)
+import pandas as pd
+df = pd.DataFrame(bq.ohlc("XAUUSD", interval="1h", limit=500))
+
+# Only the ~280 instruments that are live right now
+live = bq.symbols(live_only=True)
+
+# This week's high-impact macro events
+events = bq.calendar(importance="high", countries="US,EU,GB")
+```
+
+## Good to know
+
+- `last` and `volume` are always `0` on FX/CFD feeds - `mid` is the price.
+- The catalogue lists ~1,700 instruments but only ~280 quote at any moment; filter with `symbols(live_only=True)`.
+- For push updates use the SignalR hub at `https://biquote.io/hubs/tick` (no rate limit) - see the [API docs](https://biquote.io/docs/).
+- Docs: https://biquote.io/docs/ - Widgets: https://widgets.biquote.io
+
+MIT (c) biquote.io
